@@ -1,4 +1,4 @@
-# Configuration DefectDojo - Correction stricte du port via variable d'environnement
+# Configuration DefectDojo - Adaptation du protocole uWSGI pour Render
 services:
   # 1. Le Cache (Render Key Value)
   - type: keyvalue
@@ -14,10 +14,16 @@ services:
     plan: free
     region: oregon
     image:
-      url: docker.io/defectdojo/defectdojo-django:latest # Plus de propriété 'port' ici !
+      url: docker.io/defectdojo/defectdojo-django:latest
     envVars:
       - key: PORT
-        value: "8080" # <--- C'est comme ça que Render comprend quel port écouter pour l'image
+        value: "8080"
+      # --- CONFIGURATION UWSGI POUR RENDER ---
+      - key: UWSGI_HTTP
+        value: ":8080" # Force uWSGI à parler en HTTP sur le port 8080
+      - key: UWSGI_BUFFER_SIZE
+        value: "32768" # Augmente le buffer pour éviter le "max 8192"
+      # ---------------------------------------
       - key: DD_DATABASE_URL
         fromDatabase:
           name: dojo-db-v2

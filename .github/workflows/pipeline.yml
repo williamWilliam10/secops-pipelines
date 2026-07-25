@@ -1,0 +1,32 @@
+name: Pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  issues: write
+  actions: write
+  packages: write
+
+jobs:
+  security-scans:
+    name: Scans de sécurité et tests
+    uses: ./.github/workflows/_security-scans.yml
+    secrets: inherit
+
+  build-and-scan:
+    name: Build et scan de l'image
+    needs: [security-scans]
+    uses: ./.github/workflows/_build.yml
+    secrets: inherit
+
+  deploy:
+    name: Déploiement
+    needs: [build-and-scan]
+    uses: ./.github/workflows/_deploy.yml
+    secrets: inherit

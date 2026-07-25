@@ -1,10 +1,10 @@
-# Configuration DefectDojo alignée sur la même région avec les bons ports
+# Configuration DefectDojo - Correction du bloc image.port et rafraîchissement BDD
 services:
   # 1. Le Cache (Render Key Value)
   - type: keyvalue
     name: dojo-redis
     plan: free
-    region: oregon # Fixé en Oregon
+    region: oregon
     ipAllowList: []
 
   # 2. L'application Web DefectDojo
@@ -12,14 +12,14 @@ services:
     name: defectdojo-web
     runtime: image
     plan: free
-    region: oregon # Fixé en Oregon
-    port: 8080 # <--- INDISPENSABLE : Dit à Render d'écouter le port 8080 du conteneur
+    region: oregon
     image:
       url: docker.io/defectdojo/defectdojo-django:latest
+      port: 8080 # <--- Placé ICI, à l'intérieur du bloc image !
     envVars:
       - key: DD_DATABASE_URL
         fromDatabase:
-          name: dojo-db
+          name: dojo-db-v2 # Point vers le nouveau nom de la BDD
           property: connectionString
       - key: DD_REDIS_URL
         fromService:
@@ -33,10 +33,10 @@ services:
       - key: DD_ALLOWED_HOSTS
         value: "*"
 
-# 3. La Base de Données PostgreSQL
+# 3. La Base de Données PostgreSQL (Nouveau nom pour forcer la recréation en Oregon)
 databases:
-  - name: dojo-db
+  - name: dojo-db-v2
     postgresMajorVersion: '18'
     plan: free
-    region: oregon # <--- Force la BDD à se recréer en Oregon à côté des autres
+    region: oregon
     ipAllowList: []

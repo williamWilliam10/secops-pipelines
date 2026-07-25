@@ -1,40 +1,38 @@
-# Configuration automatisée DefectDojo conforme à la doc Render
-# Version corrigee DefectDojo 2026
+# Configuration DefectDojo 100% GRATUITE
 services:
   # 1. Le Cache (Render Key Value)
-  - type: keyvalue #
-    name: dojo-redis #
-    plan: starter #
-    ipAllowList: [] # Sécurité : accessible uniquement en interne
+  - type: keyvalue
+    name: dojo-redis
+    plan: free # <--- Changé de starter à free
+    ipAllowList: []
 
-  # 2. L'application Web DefectDojo (Prebuilt Image)
-  - type: web #
-    name: defectdojo-web #
-    runtime: image # Obligatoire pour charger une image sans dépôt Git applicatif
-    plan: starter #
+  # 2. L'application Web DefectDojo
+  - type: web
+    name: defectdojo-web
+    runtime: image
+    plan: free # <--- Changé de starter à free
     image:
-      url: docker.io/defectdojo/defectdojo-django:latest #
-    envVars: #
+      url: docker.io/defectdojo/defectdojo-django:latest
+    envVars:
       - key: DD_DATABASE_URL
-        fromDatabase: #
-          name: dojo-db #
-          property: connectionString #
+        fromDatabase:
+          name: dojo-db
+          property: connectionString
       - key: DD_REDIS_URL
-        fromService: #
-          type: keyvalue # Spécifié explicitement comme dans la doc
-          name: dojo-redis #
+        fromService:
+          type: keyvalue
+          name: dojo-redis
           property: connectionString
       - key: DD_SECRET_KEY
-        generateValue: true #
+        generateValue: true
       - key: DD_DEBUG
-        value: "false" #
+        value: "false"
       - key: DD_ALLOWED_HOSTS
-        value: "*" #
-
+        value: "*"
 
 # 3. La Base de Données PostgreSQL
-databases: #
-  - name: dojo-db #
-    postgresMajorVersion: '18' # Version 18 comme convenu, avec la bonne syntaxe doc
-    plan: starter #
-    ipAllowList: [] #
+databases:
+  - name: dojo-db
+    postgresMajorVersion: '18'
+    plan: free # <--- Changé de starter à free
+    ipAllowList: []

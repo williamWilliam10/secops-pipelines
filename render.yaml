@@ -1,16 +1,19 @@
-# Configuration DefectDojo 100% GRATUITE
+# Configuration DefectDojo alignée sur la même région avec les bons ports
 services:
   # 1. Le Cache (Render Key Value)
   - type: keyvalue
     name: dojo-redis
-    plan: free # <--- Changé de starter à free
+    plan: free
+    region: oregon # Fixé en Oregon
     ipAllowList: []
 
   # 2. L'application Web DefectDojo
   - type: web
     name: defectdojo-web
     runtime: image
-    plan: free # <--- Changé de starter à free
+    plan: free
+    region: oregon # Fixé en Oregon
+    port: 8080 # <--- INDISPENSABLE : Dit à Render d'écouter le port 8080 du conteneur
     image:
       url: docker.io/defectdojo/defectdojo-django:latest
     envVars:
@@ -34,5 +37,6 @@ services:
 databases:
   - name: dojo-db
     postgresMajorVersion: '18'
-    plan: free # <--- Changé de starter à free
+    plan: free
+    region: oregon # <--- Force la BDD à se recréer en Oregon à côté des autres
     ipAllowList: []

@@ -1,4 +1,4 @@
-# Configuration DefectDojo - Adaptation du protocole uWSGI pour Render
+# Configuration DefectDojo - Automatisation de l'initialisation de la BDD pour plan Free
 services:
   # 1. Le Cache (Render Key Value)
   - type: keyvalue
@@ -15,15 +15,17 @@ services:
     region: oregon
     image:
       url: docker.io/defectdojo/defectdojo-django:latest
+    # --- AJOUT DE LA COMMANDE DE DÉMARRAGE AUTOMATIQUE ---
+    # Cette commande initialise la BDD si nécessaire, puis lance le serveur standard
+    startCommand: python3 manage.py initialize && uwsgi --ini /app/wsgi/uwsgi.ini
+    # -----------------------------------------------------
     envVars:
       - key: PORT
         value: "8080"
-      # --- CONFIGURATION UWSGI POUR RENDER ---
       - key: UWSGI_HTTP
-        value: ":8080" # Force uWSGI à parler en HTTP sur le port 8080
+        value: ":8080"
       - key: UWSGI_BUFFER_SIZE
-        value: "32768" # Augmente le buffer pour éviter le "max 8192"
-      # ---------------------------------------
+        value: "32768"
       - key: DD_DATABASE_URL
         fromDatabase:
           name: dojo-db-v2
